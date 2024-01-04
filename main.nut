@@ -1,7 +1,7 @@
 // SETTINGS //
 
-local s_serverFile = "errors/server.txt";
-local s_clientFile = "errors/client.txt";
+local s_serverFile = "server_errors.txt";
+local s_clientFile = "client_errors.txt";
 
 // *** //
 
