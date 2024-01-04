@@ -52,7 +52,13 @@ class CErrorHandler
         message.push(format("[squirrel] Error runtime: '%s' (Ln: %d): %s\n", stack[0].src, stack[0].line, error));
 
         if (pid != -1)
-            message.push(format("-== Received from player '%s' (ID: %d) ==-", getPlayerName(pid), pid));
+        {
+            local name = "unknown";
+            if (isPlayerConnected(pid))
+                name = getPlayerName(pid);
+
+            message.push(format("-== Received from player '%s' (ID: %d) ==-", name, pid));
+        }
 
         if (locals != null)
         {
