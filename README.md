@@ -5,7 +5,6 @@ Credits to https://gitlab.com/g2o/scripts/remoteerrortracker for the initial ide
 
 ## Features:
 - Automatic logging errors from server side into separate file
-- Protection from error spam - only one error of the same type per game session will be sent to the server (for example: if there's a ton of errors on the client-side, which are happened in the onRender event)
 - Displaying level of local variables (level = 0 is getstackinfos() itself! level = 1 is the current function, level = 2 is the caller of the current function, and so on)
 - Display name of the function, where error is occurred (**NOTE:** This is disabled by default, to enable it read section Usage)
 
@@ -13,6 +12,7 @@ Credits to https://gitlab.com/g2o/scripts/remoteerrortracker for the initial ide
 1. If [BPackets](https://gitlab.com/bcore1/bpackets) module is loaded on **both sides**:
 - Automatic display client-side errors in the server console
 - Logging errors from client-side into separate file, as well as server-side errors
+- Protection from error spam - only one error of the same type per game session will be sent to the server (for example: if there's a ton of errors on the client-side, which are happened in the onRender event)
 
 2. If [Regex](https://gitlab.com/thunderglow1453/Squirrel-Regex-Module) and [ANSIConsole](https://gitlab.com/g2o/modules/ansiconsole) are loaded on the **server-side**:
 - Some parts of the error message will be colored
