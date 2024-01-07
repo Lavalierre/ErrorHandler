@@ -1,28 +1,34 @@
 // SETTINGS //
 
-local s_serverFile = "server_errors.txt";
-local s_clientFile = "client_errors.txt";
+local s_serverFile          = "server_errors.txt";
+local s_clientFile          = "client_errors.txt";
+local b_printFunctionName   = false;
 
 // *** //
+local BPACKET_LOADED    = "BPacketMessage" in getroottable();
+local REGEX_LOADED      = "Regex" in getroottable();
 
 ERROR_HANDLER <- -1;
 
 // BPackets // 
-class ClientErrorMessage extends BPacketMessage
-{   
-    </ type = BPacketString />
-    error = null
-    </ type = BPacketArray(BPacketTable({func = BPacketString, src = BPacketString, line = BPacketInt32})) />
-    stack = null
-}
-
-if (SERVER_SIDE)
+if (BPACKET_LOADED)
 {
-    ClientErrorMessage.bind(function(pid, message){
+    class ClientErrorMessage extends BPacketMessage
+    {   
+        </ type = BPacketString />
+        error = null
+        </ type = BPacketArray(BPacketTable({func = BPacketString, src = BPacketString, line = BPacketInt32})) />
+        stack = null
+    }
 
-        local msg = ERROR_HANDLER.GenerateMessage(message.error, message.stack, null, pid);
-        ERROR_HANDLER.Print(msg);
-    });
+    if (SERVER_SIDE)
+    {
+        ClientErrorMessage.bind(function(pid, message){
+
+            local msg = ERROR_HANDLER.GenerateMessage(message.error, message.stack, null, pid);
+            ERROR_HANDLER.Print(msg);
+        });
+    }
 }
 // *** //
 
@@ -36,6 +42,7 @@ class CErrorHandler
     function Write(fileName, message)
     {
         local date = date(time());
+        message = RemoveANSICodes(message);
 
         local errorFile = file(fileName, "a+");
         errorFile.write(format("[%d-%02d-%02d %02d:%02d:%02d] ", date.year, date.month + 1, date.day, date.hour, date.min, date.sec));
@@ -49,7 +56,12 @@ class CErrorHandler
     {
         local message = [];
 
-        message.push(format("[squirrel] Error runtime: '%s' (Ln: %d): %s\n", stack[0].src, stack[0].line, error));
+        local funcName = b_printFunctionName ? format("Func: %s, ", stack[0].func) : "";
+
+        if (SERVER_SIDE && REGEX_LOADED)
+            message.push(format("\x1b[33m[squirrel]\x1b[37m Error runtime: '%s' (%sLn: %d): %s\n", stack[0].src, funcName, stack[0].line, error));
+        else
+            message.push(format("[squirrel] Error runtime: '%s' (%sLn: %d): %s\n", stack[0].src, funcName, stack[0].line, error));
 
         if (pid != -1)
         {
@@ -57,7 +69,7 @@ class CErrorHandler
             if (isPlayerConnected(pid))
                 name = getPlayerName(pid);
 
-            message.push(format("-== Received from player '%s' (ID: %d) ==-", name, pid));
+            message.push(format("-== Received from player \x1b[32m'%s'\x1b[37m (ID: %d) ==-", name, pid));
         }
 
         if (locals != null)
@@ -77,7 +89,10 @@ class CErrorHandler
                     if (typeof val == "table" && val == getroottable())
                         value = "this";
                     
-                    message.push(format("+ (Lv: %d) %s:", i, typeof val) + " " + value);
+                    if (SERVER_SIDE && REGEX_LOADED)
+                        message.push(format("\x1b[32m+\x1b[37m (Lv: %d) %s:", i, typeof val) + " " + value);
+                    else
+                        message.push(format("+ (Lv: %d) %s:", i, typeof val) + " " + value);
                 }
             }
         }
@@ -112,6 +127,38 @@ class CErrorHandler
         a_errorsCatched.push(stack);
         return true;
     }
+
+    function RemoveANSICodes(message)
+    {
+        if (REGEX_LOADED)
+        {
+            local reg       = Regex(@"\x1b.*?m");
+            local outstr    = "";
+            local lastidx   = 0;
+            local results   = null;
+
+            for (local i = 0; i < message.len(); i++)
+            {
+                outstr  = "";
+                lastidx = 0;
+                results = reg.capture(message[i]);
+                
+                if (results != null)
+                {
+                    foreach(j, val in results)
+                    {
+                        outstr += message[i].slice(lastidx, val.begin);
+                        lastidx = val.end;
+                    }
+
+                    outstr += message[i].slice(lastidx, message[i].len());
+                    message[i] = outstr;
+                }
+            }
+        }
+
+        return message;
+    }
 }
 
 function ErrorHandler(error)
@@ -142,7 +189,7 @@ function ErrorHandler(error)
     local printMessage = ERROR_HANDLER.GenerateMessage(error, stackInfos, stackLocals);
     ERROR_HANDLER.Print(printMessage);
 
-    if (CLIENT_SIDE && sync && stackInfos.len() != 0)
+    if (BPACKET_LOADED && CLIENT_SIDE && sync && stackInfos.len() != 0)
     {
         local syncMessage = ClientErrorMessage(error, stackInfos);
         syncMessage.serialize().send(RELIABLE);
