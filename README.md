@@ -7,7 +7,7 @@ Credits to https://gitlab.com/g2o/scripts/remoteerrortracker for the initial ide
 - Automatic logging errors from server side into separate file
 - Protection from error spam - only one error of the same type per game session will be sent to the server (for example: if there's a ton of errors on the client-side, which are happened in the onRender event)
 - Displaying level of local variables (level = 0 is getstackinfos() itself! level = 1 is the current function, level = 2 is the caller of the current function, and so on)
-- Display name of the function, where error is ocurred (**NOTE:** This is disabled by default, to enable it read section Usage)
+- Display name of the function, where error is occurred (**NOTE:** This is disabled by default, to enable it read section Usage)
 
 ## Additional features:
 1. If [BPackets](https://gitlab.com/bcore1/bpackets) module is loaded on **both sides**:
@@ -28,4 +28,4 @@ Credits to https://gitlab.com/g2o/scripts/remoteerrortracker for the initial ide
 (OPTIONAL) Change default settings, which are placed on top of the **main.nut** file, in the **// SETTINGS //** comment section:
 - **s_serverFile** to the file name, where server-side errors will be logged
 - **s_clientFile** to the file name, where client-side errors will be logged (if this additional feature is enabled)
-- **b_printFunctionName** to display name of the function, where error is ocurred
+- **b_printFunctionName** to display name of the function, where error is occurred
