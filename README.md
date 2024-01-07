@@ -14,7 +14,7 @@ Credits to https://gitlab.com/g2o/scripts/remoteerrortracker for the initial ide
 - Logging errors from client-side into separate file, as well as server-side errors
 - Protection from error spam - only one error of the same type per game session will be sent to the server (for example: if there's a ton of errors on the client-side, which are happened in the onRender event)
 
-2. If [Regex](https://gitlab.com/thunderglow1453/Squirrel-Regex-Module) and [ANSIConsole](https://gitlab.com/g2o/modules/ansiconsole) are loaded on the **server-side**:
+2. If [Regex](https://gitlab.com/thunderglow1453/Squirrel-Regex-Module) and [ANSIConsole](https://gitlab.com/g2o/modules/ansiconsole) modules are loaded on the **server-side**:
 - Some parts of the error message will be colored
 
 ## Downsides:
