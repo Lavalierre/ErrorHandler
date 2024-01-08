@@ -1,7 +1,7 @@
 // SETTINGS //
 
-local s_serverFile          = "server_errors.txt";
-local s_clientFile          = "client_errors.txt";
+local s_serverFile          = "errors/server.txt";
+local s_clientFile          = "errors/client.txt";
 local b_printFunctionName   = false;
 
 // *** //
@@ -179,8 +179,9 @@ function ErrorHandler(error)
             line = stackInfo.line,
         };
 
-        if (CLIENT_SIDE && ERROR_HANDLER.CatchError(stack))
-            sync = true;
+        if (CLIENT_SIDE && !sync)
+            if (ERROR_HANDLER.CatchError(stack))
+                sync = true;
         
 		stackInfos.push(stack);
         stackLocals.push(stackInfo.locals);
