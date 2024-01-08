@@ -3,21 +3,29 @@ This script will override the default error handler, keeping the same message fo
 
 Credits to https://gitlab.com/g2o/scripts/remoteerrortracker for the initial idea.
 
-**Features:**
-- Displaying client-side errors in the server console
-- Automatic logging errors from both sides into separate files
-- Protection from error spam - only one error of the same type per game session will be sent to the server (for example: if there's a ton of errors on the client-side, which are happened in the onRender event)
+## Features:
+- Automatic logging errors from server side into separate file
 - Displaying level of local variables (level = 0 is getstackinfos() itself! level = 1 is the current function, level = 2 is the caller of the current function, and so on)
+- Display name of the function, where error is occurred (**NOTE:** This is disabled by default, to enable it read section Usage)
 
-**Downsides:**
-- No coloring in the server or in-game console (at least for now)
+## Additional features:
+1. If [BPackets](https://gitlab.com/bcore1/bpackets) module is loaded on **both sides**:
+- Automatic display client-side errors in the server console
+- Logging errors from client-side into separate file, as well as server-side errors
+- Protection from error spam - only one error of the same type per game session will be sent to the server (for example: if there's a ton of errors on the client-side, which are happened in the onRender event)
+
+2. If [Regex](https://gitlab.com/thunderglow1453/Squirrel-Regex-Module) and [ANSIConsole](https://gitlab.com/g2o/modules/ansiconsole) modules are loaded on the **server-side**:
+- Some parts of the error message will be colored
+
+## Downsides:
 - In-game console will display client-side errors in the 'view info' mode, not 'view errors'
-
-**Requirements:**
-- BPackets (https://gitlab.com/bcore1/bpackets)
 
 ## Usage
 
 - Copy all files into your server folder
 - Import **meta.xml** in your config file
-- (OPTIONAL) Change default file paths in the **main.nut**. They're placed on top of the file, in the **// SETTINGS //** comment section
+  
+(OPTIONAL) Change default settings, which are placed on top of the **main.nut** file, in the **// SETTINGS //** comment section:
+- **s_serverFile** to the file name, where server-side errors will be logged
+- **s_clientFile** to the file name, where client-side errors will be logged (if this additional feature is enabled)
+- **b_printFunctionName** to display name of the function, where error is occurred
