@@ -4,6 +4,8 @@ local s_serverFile          = "server_errors.txt";
 local s_clientFile          = "client_errors.txt";
 local b_clientSideLocals    = false;
 local b_printFunctionName   = false;
+local i_serverDepth         = 2;
+local i_clientDepth         = 2;
 
 // *** //
 local BPACKET_LOADED    = "BPacketMessage" in getroottable();
@@ -255,7 +257,7 @@ class CErrorHandler
 
 function ErrorHandler(error)
 {
-    local depth = 2;
+    local depth = SERVER_SIDE ? i_serverDepth : i_clientDepth;
 	local stackInfos = [];
     local stackLocals = [];
     local sync = false;
