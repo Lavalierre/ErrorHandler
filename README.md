@@ -34,3 +34,9 @@ Credits to https://gitlab.com/g2o/scripts/remoteerrortracker for the initial ide
 - **b_printFunctionName** to display name of the function, where error is occurred
 - **b_clientSideLocals** to send information about client-side local variables to the server (enabling this may cause some load on the network)
 - **i_serverDepth** AND **i_clientDepth** to change the level of displayable local variables information (level = 0 is getstackinfos() itself! level = 1 is the current function, level = 2 is the caller of the current function, and so on)
+
+### How to use send print message client -> server
+```C++
+// print(string text[, bool synchronize])
+print("Client-Side Message", true);
+```
